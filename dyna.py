@@ -172,7 +172,7 @@ if st.button("Show All Locations"):
 
 # Display the map if button pressed
 if st.session_state.show_map:
-    st.write("### All Temples in the Dataset")
+    st.write("### Heritage Temples Of India")
     st.write("Here are all the temples with their locations:")
 
     # Convert Coordinates to numeric for plotting on the map
