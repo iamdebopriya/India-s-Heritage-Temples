@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import pydeck as pdk
 
 # Load dataset with caching
 @st.cache_data
@@ -133,42 +132,13 @@ if st.button("Recommend"):
         )
         recommendations[['Latitude', 'Longitude']] = coordinates
 
-        # Prepare data for map visualization
-        map_data = recommendations[['templeName', 'Latitude', 'Longitude']].copy()
-        map_data['color'] = [[255, 105, 180, 200]] * len(map_data)  # Light pink with transparency
+        # Remove rows with NaN coordinates
+        recommendations = recommendations.dropna(subset=['Latitude', 'Longitude'])
 
-        # Plot on Map using Pydeck with temple names and coordinates
-        st.pydeck_chart(pdk.Deck(
-            map_style='mapbox://styles/mapbox/light-v9',
-            initial_view_state=pdk.ViewState(
-                latitude=20.5937,
-                longitude=78.9629,
-                zoom=4,
-                pitch=50,
-            ),
-            layers=[
-                pdk.Layer(
-                    'ScatterplotLayer',
-                    data=map_data,
-                    get_position='[Longitude, Latitude]',
-                    get_fill_color='color',
-                    get_radius=1000,  # Adjust size of circles
-                    radius_min_pixels=5,
-                    radius_max_pixels=15,
-                    pickable=True
-                ),
-                pdk.Layer(
-                    'TextLayer',
-                    data=map_data,
-                    get_position='[Longitude, Latitude]',
-                    get_text='templeName',
-                    get_size=16,
-                    get_color=[0, 0, 0, 200],  # Black with transparency
-                    size_units='pixels',
-                    pickable=True
-                )
-            ],
-        ))
+        # Plot on Map using Streamlit's map function
+        map_data = recommendations[['templeName', 'Latitude', 'Longitude']].copy()
+        map_data.columns = ['name', 'lat', 'lon']
+        st.map(map_data)
     else:
         st.write("No recommendations found. Please try a different description.")
 
@@ -191,39 +161,10 @@ if st.button("Top Places"):
     )
     static_top_places[['Latitude', 'Longitude']] = coordinates
 
-    # Prepare data for map visualization
-    map_data = static_top_places[['TempleName', 'Latitude', 'Longitude']].copy()
-    map_data['color'] = [[255, 105, 180, 200]] * len(map_data)  # Light pink with transparency
+    # Remove rows with NaN coordinates
+    static_top_places = static_top_places.dropna(subset=['Latitude', 'Longitude'])
 
-    # Plot on Map using Pydeck with temple names and coordinates
-    st.pydeck_chart(pdk.Deck(
-        map_style='mapbox://styles/mapbox/light-v9',
-        initial_view_state=pdk.ViewState(
-            latitude=20.5937,
-            longitude=78.9629,
-            zoom=4,
-            pitch=50,
-        ),
-        layers=[
-            pdk.Layer(
-                'ScatterplotLayer',
-                data=map_data,
-                get_position='[Longitude, Latitude]',
-                get_fill_color='color',
-                get_radius=1000,  # Adjust size of circles
-                radius_min_pixels=5,
-                radius_max_pixels=15,
-                pickable=True
-            ),
-            pdk.Layer(
-                'TextLayer',
-                data=map_data,
-                get_position='[Longitude, Latitude]',
-                get_text='TempleName',
-                get_size=16,
-                get_color=[0, 0, 0, 200],  # Black with transparency
-                size_units='pixels',
-                pickable=True
-            )
-        ],
-    ))
+    # Plot on Map using Streamlit's map function
+    map_data = static_top_places[['TempleName', 'Latitude', 'Longitude']].copy()
+    map_data.columns = ['name', 'lat', 'lon']
+    st.map(map_data)
