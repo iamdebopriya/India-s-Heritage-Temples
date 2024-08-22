@@ -109,8 +109,8 @@ st.title("Temple Recommendation System")
 st.markdown("""
     <style>
     .folium-map {
-        width: 200px;
-        height: 100px;
+        width: 500px;
+        height: 400px;
         margin: auto;
         padding: 0;
     }
