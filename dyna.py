@@ -29,10 +29,11 @@ tfidf_matrix = tfidf.fit_transform(df['content'])
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 # Define recommendation function
-def get_recommendations(description=None, cosine_sim=cosine_sim):
+def get_recommendations(description=None):
     recommendations = pd.DataFrame()
 
     if description:
+        # Filter based on description similarity
         desc_sim = cosine_similarity(tfidf.transform([description]), tfidf_matrix)
         desc_scores = list(enumerate(desc_sim[0]))
         desc_scores = [score for score in desc_scores if score[1] > 0.0]  # Filter scores > 0.0
@@ -42,6 +43,13 @@ def get_recommendations(description=None, cosine_sim=cosine_sim):
         recommendations = df.iloc[desc_indices][[
             'templeName', 'Coordinates', 'Description'
         ]]
+
+        # Additionally, filter by temple name if similar
+        similar_names = df[df['templeName'].str.contains(description, case=False, na=False)]
+        recommendations = pd.concat([recommendations, similar_names])
+    
+    # Remove duplicate recommendations based on templeName
+    recommendations = recommendations.drop_duplicates(subset='templeName')
 
     return recommendations
 
