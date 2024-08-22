@@ -3,3 +3,5 @@ pandas
 numpy
 pydeck
 scikit-learn
+folium
+streamlit-folium
