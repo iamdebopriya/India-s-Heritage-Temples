@@ -108,6 +108,16 @@ st.title("Temple Recommendation System")
 # Apply custom CSS for background gradient
 st.markdown("""
     <style>
+    .folium-map {
+        width: 700px;
+        height: 500px;
+        margin: auto;
+        padding: 0;
+    }
+    .streamlit-expander {
+        padding: 0;
+    }
+
     .stApp {
         background: linear-gradient(to right, #ff9a9e, #fad0c4); /* Gradient pink and light blue */
     }
@@ -128,19 +138,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-st.markdown("""
-    <style>
-    .folium-map {
-        width: 700px;
-        height: 500px;
-        margin: auto;
-        padding: 0;
-    }
-    .streamlit-expander {
-        padding: 0;
-    }
-    </style>
-""", unsafe_allow_html=True)
+
 
 
 # User input for description
