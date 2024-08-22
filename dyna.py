@@ -109,8 +109,8 @@ st.title("Temple Recommendation System")
 st.markdown("""
     <style>
     .folium-map {
-        width: 700px;
-        height: 500px;
+        width: 200px;
+        height: 100px;
         margin: auto;
         padding: 0;
     }
@@ -237,4 +237,4 @@ if st.session_state.show_top_places:
         ).add_to(m)
 
     # Display the map in Streamlit
-    st_folium(m, width=700, height=500)
+    st_folium(m, width=200, height=100)
