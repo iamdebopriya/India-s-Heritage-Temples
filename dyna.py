@@ -128,6 +128,20 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    .folium-map {
+        width: 700px;
+        height: 500px;
+        margin: auto;
+        padding: 0;
+    }
+    .streamlit-expander {
+        padding: 0;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 
 # User input for description
 description = st.text_area("Enter Temple Description:")
