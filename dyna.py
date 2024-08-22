@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import folium
+from streamlit_folium import st_folium
+
 
 # Load dataset with caching
 @st.cache_data
@@ -28,6 +31,7 @@ tfidf_matrix = tfidf.fit_transform(df['content'])
 # Compute cosine similarity matrix
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
+
 # Define recommendation function
 def get_recommendations(description=None):
     recommendations = pd.DataFrame()
@@ -47,11 +51,12 @@ def get_recommendations(description=None):
         # Additionally, filter by temple name if similar
         similar_names = df[df['templeName'].str.contains(description, case=False, na=False)]
         recommendations = pd.concat([recommendations, similar_names])
-    
+
     # Remove duplicate recommendations based on templeName
     recommendations = recommendations.drop_duplicates(subset='templeName')
 
     return recommendations
+
 
 # Function to parse coordinates
 def parse_coordinates(coord_str):
@@ -62,6 +67,7 @@ def parse_coordinates(coord_str):
     except:
         pass
     return [np.nan, np.nan]
+
 
 # Static dataset for top places
 static_top_places = pd.DataFrame({
@@ -87,6 +93,14 @@ static_top_places = pd.DataFrame({
         '(9.9196, 78.1198)'
     ]
 })
+
+# Initialize session states
+if 'show_map' not in st.session_state:
+    st.session_state.show_map = False
+if 'show_recommendations' not in st.session_state:
+    st.session_state.show_recommendations = False
+if 'show_top_places' not in st.session_state:
+    st.session_state.show_top_places = False
 
 # Streamlit UI
 st.title("Temple Recommendation System")
@@ -121,37 +135,64 @@ description = st.text_area("Enter Temple Description:")
 # Recommendation button
 if st.button("Recommend"):
     recommendations = get_recommendations(description)
+    st.session_state.show_recommendations = True
+    st.session_state.recommendations = recommendations
 
+# Display recommendations if button pressed
+if st.session_state.show_recommendations and 'recommendations' in st.session_state:
+    recommendations = st.session_state.recommendations
     if recommendations.shape[0] > 0:
         st.write("### Recommended Temples")
         st.write("Here are some temples you might find interesting based on your description:")
 
-        # Format recommendations in a cute style
+        # Format recommendations in a styled way
         for _, row in recommendations.iterrows():
             st.write(f"🌟 **Temple Name**: {row['templeName']}")
             st.write(f"🗺️ **Description**: {row['Description']}")
             st.write(f"📍 **Location Coordinates**: {row['Coordinates']}")
             st.write("---")
-
-        # Convert Coordinates to numeric for plotting on the map
-        coordinates = pd.DataFrame(
-            recommendations['Coordinates'].apply(parse_coordinates).tolist(),
-            columns=['Latitude', 'Longitude']
-        )
-        recommendations[['Latitude', 'Longitude']] = coordinates
-
-        # Remove rows with NaN coordinates
-        recommendations = recommendations.dropna(subset=['Latitude', 'Longitude'])
-
-        # Plot on Map using Streamlit's map function
-        map_data = recommendations[['templeName', 'Latitude', 'Longitude']].copy()
-        map_data.columns = ['name', 'lat', 'lon']
-        st.map(map_data)
     else:
         st.write("No recommendations found. Please try a different description.")
 
+# Show All Locations button
+if st.button("Show All Locations"):
+    st.session_state.show_map = True
+
+# Display the map if button pressed
+if st.session_state.show_map:
+    st.write("### All Temples in the Dataset")
+    st.write("Here are all the temples with their locations:")
+
+    # Convert Coordinates to numeric for plotting on the map
+    coordinates = pd.DataFrame(
+        df['Coordinates'].apply(parse_coordinates).tolist(),
+        columns=['Latitude', 'Longitude']
+    )
+    df[['Latitude', 'Longitude']] = coordinates
+
+    # Remove rows with NaN coordinates
+    df = df.dropna(subset=['Latitude', 'Longitude'])
+
+    # Create a folium map
+    m = folium.Map(location=[df['Latitude'].mean(), df['Longitude'].mean()], zoom_start=6)
+
+    # Add markers with temple names
+    for _, row in df.iterrows():
+        folium.Marker(
+            location=[row['Latitude'], row['Longitude']],
+            popup=row['templeName'],
+            icon=folium.Icon(icon='info-sign')
+        ).add_to(m)
+
+    # Display the map in Streamlit
+    st_folium(m, width=700, height=500)
+
 # Top Places button
 if st.button("Top Places"):
+    st.session_state.show_top_places = True
+
+# Display top places if button pressed
+if st.session_state.show_top_places:
     st.write("### Top Temples and Monuments in India")
     st.write("Here are some top temples and monuments in India:")
 
@@ -172,7 +213,16 @@ if st.button("Top Places"):
     # Remove rows with NaN coordinates
     static_top_places = static_top_places.dropna(subset=['Latitude', 'Longitude'])
 
-    # Plot on Map using Streamlit's map function
-    map_data = static_top_places[['TempleName', 'Latitude', 'Longitude']].copy()
-    map_data.columns = ['name', 'lat', 'lon']
-    st.map(map_data)
+    # Create a folium map
+    m = folium.Map(location=[static_top_places['Latitude'].mean(), static_top_places['Longitude'].mean()], zoom_start=6)
+
+    # Add markers with temple names
+    for _, row in static_top_places.iterrows():
+        folium.Marker(
+            location=[row['Latitude'], row['Longitude']],
+            popup=row['TempleName'],
+            icon=folium.Icon(icon='info-sign')
+        ).add_to(m)
+
+    # Display the map in Streamlit
+    st_folium(m, width=700, height=500)
