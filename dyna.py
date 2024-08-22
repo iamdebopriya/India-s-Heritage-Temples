@@ -197,7 +197,7 @@ if st.session_state.show_map:
         ).add_to(m)
 
     # Display the map in Streamlit
-    st_folium(m, width=700, height=500)
+    st_folium(m, width=500, height=400)
 
 # Top Places button
 if st.button("Top Places"):
