@@ -96,8 +96,8 @@ st.markdown("""
     }
     
     .stTextArea textarea {
-        background: rgba(40, 30, 25, 0.6) !important;
-        border: 2px solid rgba(212, 175, 55, 0.4) !important;
+        background: rgba(20, 10, 0, 0.8) !important;
+        border: 2px solid rgba(212, 175, 55, 0.5) !important;
         border-radius: 8px !important;
         color: #f4e4c1 !important;
         font-family: 'Cormorant Garamond', serif !important;
@@ -106,8 +106,8 @@ st.markdown("""
     }
     
     .stTextArea textarea:focus {
-        border-color: rgba(212, 175, 55, 0.8) !important;
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.2) !important;
+        border-color: rgba(212, 175, 55, 1) !important;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4) !important;
     }
     
     .stButton button {
@@ -293,14 +293,19 @@ if st.session_state.show_map:
     df_map = df.dropna(subset=['Latitude', 'Longitude'])
     
     # Create a folium map
-    m = folium.Map(location=[df_map['Latitude'].mean(), df_map['Longitude'].mean()], zoom_start=6, tiles='CartoDB dark_matter')
+    m = folium.Map(
+        location=[df_map['Latitude'].mean(), df_map['Longitude'].mean()], 
+        zoom_start=6,
+        tiles='https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    )
     
     # Add markers
     for _, row in df_map.iterrows():
         folium.Marker(
             location=[row['Latitude'], row['Longitude']],
-            popup=row['templeName'],
-            icon=folium.Icon(color='orange', icon='info-sign')
+            popup=folium.Popup(f"<b style='color: #d4af37; font-family: Cinzel;'>{row['templeName']}</b>", max_width=300),
+            icon=folium.Icon(color='orange', icon='place', prefix='fa')
         ).add_to(m)
     
     st_folium(m, width=1200, height=600)
@@ -327,14 +332,19 @@ if st.session_state.show_top_places:
     top_places_map = static_top_places.dropna(subset=['Latitude', 'Longitude'])
     
     # Create a folium map
-    m = folium.Map(location=[top_places_map['Latitude'].mean(), top_places_map['Longitude'].mean()], zoom_start=5, tiles='CartoDB dark_matter')
+    m = folium.Map(
+        location=[top_places_map['Latitude'].mean(), top_places_map['Longitude'].mean()], 
+        zoom_start=5,
+        tiles='https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    )
     
     # Add markers
     for _, row in top_places_map.iterrows():
         folium.Marker(
             location=[row['Latitude'], row['Longitude']],
-            popup=row['TempleName'],
-            icon=folium.Icon(color='orange', icon='info-sign')
+            popup=folium.Popup(f"<b style='color: #d4af37; font-family: Cinzel;'>{row['TempleName']}</b>", max_width=300),
+            icon=folium.Icon(color='orange', icon='place', prefix='fa')
         ).add_to(m)
     
     st_folium(m, width=1200, height=600)
