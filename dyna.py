@@ -15,7 +15,7 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;600&display=swap');
     
     .stApp {
-        background: linear-gradient(135deg, #1a1410 0%, #2d1810 50%, #1a1410 100%);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a00 50%, #0a0a0a 100%);
     }
     
     .main-title {
@@ -54,19 +54,20 @@ st.markdown("""
     }
     
     .temple-card {
-        background: linear-gradient(135deg, rgba(60, 40, 30, 0.6) 0%, rgba(40, 30, 25, 0.8) 100%);
-        border: 2px solid rgba(212, 175, 55, 0.4);
+        background: linear-gradient(135deg, rgba(20, 10, 0, 0.9) 0%, rgba(40, 20, 5, 0.95) 100%);
+        border: 2px solid rgba(212, 175, 55, 0.6);
         border-radius: 12px;
         padding: 2rem;
         margin: 1.5rem 0;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.1);
+        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2), inset 0 0 20px rgba(212, 175, 55, 0.1);
         backdrop-filter: blur(10px);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
     .temple-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(212, 175, 55, 0.3), inset 0 0 30px rgba(212, 175, 55, 0.15);
+        box-shadow: 0 12px 40px rgba(212, 175, 55, 0.4), inset 0 0 30px rgba(212, 175, 55, 0.15);
+        border-color: rgba(212, 175, 55, 0.9);
     }
     
     .temple-name {
