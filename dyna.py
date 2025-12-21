@@ -295,9 +295,12 @@ if st.session_state.show_map:
     # Create a folium map
     m = folium.Map(
         location=[df_map['Latitude'].mean(), df_map['Longitude'].mean()], 
-        zoom_start=6,
+        zoom_start=5,
         tiles='https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        min_zoom=4,
+        max_bounds=True,
+        world_copy_jump=False
     )
     
     # Add markers
@@ -308,7 +311,7 @@ if st.session_state.show_map:
             icon=folium.Icon(color='orange', icon='place', prefix='fa')
         ).add_to(m)
     
-    st_folium(m, width=1200, height=600)
+    st_folium(m, width=1200, height=600, returned_objects=[])
 
 # Display top places
 if st.session_state.show_top_places:
@@ -336,7 +339,10 @@ if st.session_state.show_top_places:
         location=[top_places_map['Latitude'].mean(), top_places_map['Longitude'].mean()], 
         zoom_start=5,
         tiles='https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attr='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        min_zoom=4,
+        max_bounds=True,
+        world_copy_jump=False
     )
     
     # Add markers
@@ -347,4 +353,4 @@ if st.session_state.show_top_places:
             icon=folium.Icon(color='orange', icon='place', prefix='fa')
         ).add_to(m)
     
-    st_folium(m, width=1200, height=600)
+    st_folium(m, width=1200, height=600, returned_objects=[])
